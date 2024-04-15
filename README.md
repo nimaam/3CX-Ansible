@@ -6,7 +6,17 @@ I am going to install 3CX automatically in the  **VMWARE vCenter**  from **Debia
  1. create-3cx-vm.yml
  2. set-root-password.yml
  3. install-3cx.yml
- We should edit the vars.yml and hosts to make the playbooks run correctly.
  
 ## Requirements
-We should install the requirements which is in the requirement.txt 
+We should install the requirements which is mentioned in the requirement.txt  and edit the vars.yml for what is needed for the installation and cloning the VM.
+
+## Run the Automation
+```
+./run.sh
+or
+ansible-play create-3cx-vm.yml
+ansible-play set-root-password.yml
+ansible-play install-3cx.yml
+```
+
+
