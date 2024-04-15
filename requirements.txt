@@ -1,0 +1,8 @@
+ansible-galaxy collection install community.vmware
+pip3 install paramiko --break-system-packages
+pip3 install passlib --break-system-packages
+pip3 install PyVmomi --break-system-packages
+pip3 install pexpect --break-system-packages
+brew install hudochenkov/sshpass/sshpass
+or 
+sudo apt install sshpass

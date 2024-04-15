@@ -1,0 +1,48 @@
+---
+
+- name: Create a virtual machine from a template
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - ./vars.yml
+
+  tasks:
+    - name: "Clone VM from template"
+      community.vmware.vmware_guest:
+        hostname: "{{ VCenter_Host }}"
+        username: "{{ VCenter_User }}"
+        password: "{{ VCenter_Pass }}"
+        validate_certs: "{{ VCenter_Certificate_Validation }}"
+        datacenter: "{{ VCenter_Datacenter }}"
+        datastore: "{{ VCenter_Datastore }}"
+        folder: "{{ VCenter_Folder }}"
+        name: "{{ VM_Name }}"
+        template: "{{ VM_Template_Name }}"
+        state: poweredon
+        disk:
+          - size_gb: "{{ VM_disk_size_GB }}"
+            type: thin
+            datastore: "{{ VCenter_Datastore }}"
+        hardware:
+          memory_mb: "{{ VM_Memory_MB }}"
+          num_cpus: "{{ VM_vCPU }}"
+        networks:
+          - name: "{{ VM_Network_Name }}"
+            ip: "{{ VM_IP_Address }}"
+            netmask: "{{ VM_Subnet }}"
+            gateway: "{{ VM_Gateway }}"
+        customization:
+          hostname: "{{ VM_Machine_Hostname }}"
+          domain: "{{ VM_Domain }}"
+          dns_servers:
+            - "{{ VM_DNS_Server1 }}"
+            - "{{ VM_DNS_Server2 }}"
+          password: "{{ VM_Password }}"
+      delegate_to: localhost
+
+    - name: Wait for SSH to become available
+      ansible.builtin.wait_for:
+        host: "{{ VM_IP_Address }}"
+        port: "{{ VM_SSH_Port }}"
+        state: started
+        timeout: 300

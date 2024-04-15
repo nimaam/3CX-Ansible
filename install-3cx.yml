@@ -1,0 +1,117 @@
+---
+- name: Install 3CX on VM
+  hosts: new_3cx_vm_pass
+  become: true
+  vars_files:
+    - vars.yml
+    
+  tasks:
+
+    - name: Install Dependencies
+      apt:
+        name: 
+          - sudo 
+          - wget 
+          - gnupg2 
+          - dphys-swapfile
+          - net-tools
+          - fail2ban
+          - unattended-upgrades
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+          - debconf
+          - debconf-utils
+          - vim
+          - telnet
+          - traceroute
+          - whois
+          - iptraf
+          - wget
+          - curl
+        update_cache: true
+        state: latest
+
+#    - name: Setup Fail2ban Whitelist 
+#      lineinfile:
+#        path: /etc/fail2ban/jail.conf
+#        regexp: '^#ignoreip'
+#        line: 'ignoreip = {{ fail2ban_whitelist }}'
+#        backup: true
+#      notify: restart fail2ban
+#      when: fail2ban_whitelist
+
+##### Config & Tune the VM
+    - name: Set swappiness to 10 when less than 10% memory left
+      sysctl:
+        name: vm.swappiness
+        value: '10'
+        state: present
+        reload: true
+
+    - name: Set Or Increase Cache Pressure to 50
+      sysctl:
+        name: vm.vfs_cache_pressure
+        value: '50'
+        state: present
+        reload: true
+  
+  ###### 3CX Setup Config  
+  #  - name: create directory /etc/3cxpbx
+  #    file:
+  #      path: /etc/3cxpbx
+  #      state: directory
+  #      recurse: yes
+    
+  #  - name: copy setupconfig.xml to /etc/3cxpbx
+  #    template:
+  #      src: setupconfig.xml
+  #      dest: "/etc/3cxpbx/setupconfig.xml"
+  
+  ###### Install 3CX
+
+    - name: Import the 3CX GPG key
+      ansible.builtin.shell:
+        cmd: wget -O- https://repo.3cx.com/key.pub | gpg --dearmor | tee /usr/share/keyrings/3cx-archive-keyring.gpg > /dev/null
+
+    - name: Add 3CX official repository
+      ansible.builtin.copy:
+        content: "deb [arch=amd64 by-hash=yes signed-by=/usr/share/keyrings/3cx-archive-keyring.gpg] http://repo.3cx.com/3cx bookworm main"
+        dest: /etc/apt/sources.list.d/3cxpbx.list
+
+    - name: Add 3CX testing repository
+      ansible.builtin.copy:
+        content: "deb [arch=amd64 by-hash=yes signed-by=/usr/share/keyrings/3cx-archive-keyring.gpg] http://repo.3cx.com/3cx bookworm-testing main"
+        dest: /etc/apt/sources.list.d/3cxpbx.list
+  
+    - name: Update Apt Cache
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Accept Agreement
+      debconf:
+        name: 3cxpbx
+        question: "3cxpbx/eula"
+        value: 'true'
+        vtype: select
+
+    - name: Install and configure 3CX
+      ansible.builtin.shell:
+        cmd: echo 1 | apt install -y 3cxpbx
+
+    #- name: Copy Backup File to 3CX Server
+    #  ansible.builtin.copy:
+    #    src: ./Backup.zip
+    #    dest: /tmp/Backup.zip
+    #    owner: root
+    #    group: root
+    #    mode: '0644'
+
+    #- name: Restore Backup
+    #  command:
+    #    cmd: sudo -u phonesystem 3CXRestoreCmd --file=/tmp/Backup.zip --log=restore_cmd.log
+    
+    #- name: start 3cx
+    #  command:
+    #    cmd: /usr/sbin/3CXLaunchWebConfigTool
