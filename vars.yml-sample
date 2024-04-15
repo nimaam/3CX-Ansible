@@ -1,0 +1,26 @@
+VCenter_User: administrator@domain.com
+VCenter_Certificate_Validation: false
+VCenter_Pass: Change_Me
+VCenter_Host: vcentertr.domain.com
+VCenter_Datacenter: My_Datacenter
+VCenter_Datastore: My_datastore1
+VCenter_Folder: MY_VM_Folder
+VM_Name: New-VM-NAME
+VM_Template_Name: Template-NAME-Debian-12
+vsphere_user: root
+vsphere_pass: ROOT_PASSWORD
+VM_disk_size_GB: 64
+VM_Memory_MB: 4096
+VM_vCPU: 2
+VM_Network_Name: VM Network
+VM_IP_Address: 192.168.12.254
+VM_Subnet: 255.255.255.0
+VM_Gateway: 192.168.12.1
+VM_Machine_Hostname: 3cx_exmple
+VM_Domain: domain.com
+VM_DNS_Server1: 8.8.4.4
+VM_DNS_Server2: 4.2.2.1
+VM_Username: root
+VM_Default_Password: CHANGE_ME_Template_Root_Password
+VM_Password: VM_NEW_PASSWORD
+VM_SSH_Port: 22

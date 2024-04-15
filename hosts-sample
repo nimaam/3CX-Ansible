@@ -1,0 +1,16 @@
+[new_3cx_vm]
+192.168.12.254
+
+[new_3cx_vm:vars]
+ansible_connection=ssh
+ansible_password=TEMPLATE_VM_DEFAULT_PASSWORD
+ansible_user=root 
+
+[new_3cx_vm_pass]
+192.168.12.254
+
+[new_3cx_vm_pass:vars]
+ansible_connection=ssh
+ansible_user=root
+ansible_password=NEW_VM_PASSWORD
+
